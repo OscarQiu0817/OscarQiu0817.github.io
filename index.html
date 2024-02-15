@@ -1,8 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
+<html><head>
     <title>QR Code Scanner</title>
-	<script src="./index.min.js" ></script>
+	<script src="./index.min.js"></script>
 	<style>
 * {
   box-sizing: border-box;
@@ -48,25 +46,25 @@
 }
 </style>
 </head>
-<body>
+<body style="top: 5%;position: absolute;left: 12%;font-size: 3em;">
     <h1>QR Code Scanner</h1>
 <div>
-        <button id="startButton" style=" font-size: 32px;" >Start</button> &ensp;&ensp;&ensp;
-        <button id="resetButton" style=" font-size: 32px;" >Reset</button>
+        <button id="startButton" style=" font-size: 32px;">Start</button> &ensp;&ensp;
+        <button id="resetButton" style=" font-size: 32px;">Reset</button>
       </div>
 
       <div>
-        <video id="video" width="500" height="350" style="border: 1px solid gray"></video>
+        <video id="video" width="700" height="550" style="border: 1px solid gray"></video>
       </div>
 
       <div id="sourceSelectPanel">
-        <label for="sourceSelect" style='    font-size: 32px;'>Change video source:</label>
+        <label for="sourceSelect" style="    font-size: 32px;">Change video source:</label>
         <select id="sourceSelect" style="max-width:400px;    font-size: 32px;">
         </select>
       </div>
 
-      <label style='font-size: 32px;'>Result:</label>
-      <pre><code id="result" style='font-size: 32px;'></code></pre>
+      <label style="font-size: 32px;">Result:</label>
+      <pre><code id="result" style="font-size: 32px;"></code></pre>
     
     <script>
         window.addEventListener('load', function () {
@@ -122,5 +120,6 @@
 		})
 		
     </script>
-</body>
-</html>
+
+
+</body></html>
