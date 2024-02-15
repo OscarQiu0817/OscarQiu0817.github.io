@@ -51,22 +51,22 @@
 <body>
     <h1>QR Code Scanner</h1>
 <div>
-        <a class="button" id="startButton">Start</a>
-        <a class="button" id="resetButton">Reset</a>
+        <button id="startButton" style=" font-size: 32px;" >Start</button> &ensp;&ensp;&ensp;
+        <button id="resetButton" style=" font-size: 32px;" >Reset</button>
       </div>
 
       <div>
         <video id="video" width="500" height="350" style="border: 1px solid gray"></video>
       </div>
 
-      <div id="sourceSelectPanel" style="/* display:none; */">
-        <label for="sourceSelect">Change video source:</label>
-        <select id="sourceSelect" style="max-width:400px">
+      <div id="sourceSelectPanel">
+        <label for="sourceSelect" style='    font-size: 32px;'>Change video source:</label>
+        <select id="sourceSelect" style="max-width:400px;    font-size: 32px;">
         </select>
       </div>
 
-      <label>Result:</label>
-      <pre><code id="result"></code></pre>
+      <label style='font-size: 32px;'>Result:</label>
+      <pre><code id="result" style='font-size: 32px;'></code></pre>
     
     <script>
         window.addEventListener('load', function () {
