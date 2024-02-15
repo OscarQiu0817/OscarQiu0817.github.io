@@ -87,6 +87,7 @@
 
             sourceSelect.onchange = () => {
               selectedDeviceId = sourceSelect.value;
+			  document.getElementById('resetButton').click();
 			  document.getElementById('startButton').click();
             };
 
