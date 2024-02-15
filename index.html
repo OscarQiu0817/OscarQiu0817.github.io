@@ -50,10 +50,23 @@
 </head>
 <body>
     <h1>QR Code Scanner</h1>
-    <video id="videoElement" width="700" height="500" autoplay></video>
-    <br>
-	<h2>result:</h2>
-    <h2 id="result"><h2>
+<div>
+        <a class="button" id="startButton">Start</a>
+        <a class="button" id="resetButton">Reset</a>
+      </div>
+
+      <div>
+        <video id="video" width="500" height="350" style="border: 1px solid gray"></video>
+      </div>
+
+      <div id="sourceSelectPanel" style="/* display:none; */">
+        <label for="sourceSelect">Change video source:</label>
+        <select id="sourceSelect" style="max-width:400px">
+        </select>
+      </div>
+
+      <label>Result:</label>
+      <pre><code id="result"></code></pre>
     
     <script>
         window.addEventListener('load', function () {
