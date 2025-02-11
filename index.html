@@ -259,7 +259,8 @@
 
 				// 顯示圖片
 				const avatarImage = document.getElementById("avatar");
-				avatarImage.src = `data:image/png;base64,${avatar.replaceAll(' ', '+')}`;
+				//avatarImage.src = `data:image/png;base64,${avatar.replaceAll(' ', '+')}`;
+				avatarImage.src = `${avatar}`;
 
 				// 顯示名稱、職稱、郵件等
 				document.getElementById("name").textContent = info.name;
