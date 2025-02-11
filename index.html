@@ -224,10 +224,10 @@
 
             <!-- 社交圖示 -->
             <div class="icons">
-                <a href="mailto:zhangsan@example.com">📧</a>
-                <a href="tel:+886912345678">📞</a>
-                <a href="https://github.com/OscarQiu0817/" target="_blank"><img src="./github-mark.svg" style='width:36px' ></a>
-                <a href="https://line.me/ti/p/zUcYpzKERR" target="_blank"><img src="./line.png" style='width:36px' ></a>
+                <a id="iconMail" href="mailto:zhangsan@example.com">📧</a>
+                <a id="iconPhone" href="tel:+886912345678">📞</a>
+                <a id="" href="https://github.com/OscarQiu0817/" target="_blank"><img src="./github-mark.svg" style='width:36px' ></a>
+                <a id="" href="https://line.me/ti/p/zUcYpzKERR" target="_blank"><img src="./line.png" style='width:36px' ></a>
             </div>
 			
 			<div class="qrcode" id="qrcode"></div>
@@ -291,6 +291,9 @@
 				document.getElementById("name").textContent = info.name;
 				document.getElementById("title").textContent = info.title;
 				document.getElementById("email").textContent = info.email;
+				document.getElementById("iconMail").href = "mailto:" + info.email;
+				document.getElementById("iconPhone").href = "tel:" + info.phone;
+				
 				
 				initQr( info );
 				
