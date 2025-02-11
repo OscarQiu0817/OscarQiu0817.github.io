@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script> -->
+	<script src="./canvas2svg.js" type="text/javascript" charset="utf-8"></script>
+	<script src="./easy.qrcode.js" type="text/javascript" charset="utf-8"></script>
     <title>電子名片</title>
     <style>
         * {
@@ -179,6 +182,10 @@
         .icons a:hover {
             color: #007bff;
         }
+		
+		.qrcode{
+			padding-top: 30px
+		}
 
     </style>
 </head>
@@ -188,10 +195,10 @@
     <div class="navbar">
         <div class="logo">寬聯資訊</div>
         <div class="navbar-links">
-            <a href="#">首頁</a>
-            <a href="#">服務</a>
-            <a href="#">關於</a>
-            <a href="#">聯絡</a>
+            <a href="https://www.kli.com.tw/">首頁</a>
+            <a href="https://www.kli.com.tw/">服務</a>
+            <a href="https://www.kli.com.tw/">關於</a>
+            <a href="https://www.kli.com.tw/">聯絡</a>
         </div>
         <div class="menu-icon" onclick="toggleMenu()">
             <div></div>
@@ -219,9 +226,14 @@
             <div class="icons">
                 <a href="mailto:zhangsan@example.com">📧</a>
                 <a href="tel:+886912345678">📞</a>
-                <a href="https://github.com/zhangsan" target="_blank">🐱</a>
-                <a href="https://linkedin.com/in/zhangsan" target="_blank">💼</a>
+                <a href="https://github.com/OscarQiu0817/" target="_blank"><img src="./github-mark.svg" style='width:36px' ></a>
+                <a href="https://line.me/ti/p/zUcYpzKERR" target="_blank"><img src="./line.png" style='width:36px' ></a>
             </div>
+			
+			<div class="qrcode" id="qrcode"></div>
+			<pre>↑Scan to add contact info↑</pre>
+			
+
         </div>
     </div>
 
@@ -245,9 +257,22 @@
 		// 解析 Base64 編碼的 JSON
 		function parseData(dataBase64) {
 			const jsonStr = atob(dataBase64); // 解碼 Base64
-			return JSON.parse(jsonStr); // 轉換為 JSON 對象
+			return JSON.parse( decodeURIComponent(escape(jsonStr)) ); // 轉換為 JSON 對象
 		}
-
+		
+		/* 
+		{
+			"org": "寬聯資訊",
+			"title": "Software Engineer",
+			"name": "Oscar Qiu",
+			"email": "test1234@mail.com",
+			"phone": "0912345678",
+			"url1": "test1234@mail.com",
+			"url2": "test1234@mail.com",
+			"url3": "test1234@mail.com"
+		}
+		
+		*/
 		// 顯示資訊
 		function displayInfo() {
 			const { data, avatar } = getQueryParams();
@@ -266,14 +291,47 @@
 				document.getElementById("name").textContent = info.name;
 				document.getElementById("title").textContent = info.title;
 				document.getElementById("email").textContent = info.email;
+				
+				initQr( info );
+				
 			} else {
 				console.log("Missing data or avatar.");
 			}
 		}
-
+		
+		function initQr( info ){
+			
+			var options = {
+				text: [
+					"BEGIN:VCARD",
+					"VERSION:3.0",
+					"N:Doe;John;;Dr;", // name
+					`FN:${info.name}`, // full name
+					`ORG:${info.org}`,
+					`TITLE:${info.title}`,
+					`EMAIL:${info.email}`,
+					`TEL;TYPE=cell:${info.phone}`,
+					"END:VCARD"
+				].join("\r\n"),
+				width: 144,
+				height: 144,
+				colorDark : "#000000",
+				colorLight : "#ffffff",
+				correctLevel : QRCode.CorrectLevel.H, // L, M, Q, H
+			};
+			
+			// Create QRCode Object
+			new QRCode(document.getElementById("qrcode"), options );
+		
+		}
+		
 		// 在頁面載入時執行
 		window.onload = displayInfo;
+		
+		// json to base64 : https://codebeautify.org/json-to-base64-converter
+		// vcard : https://stackoverflow.com/questions/70498657/is-it-possible-to-add-form-data-in-qr-code
+		// 
     </script>
-
+	
 </body>
 </html>
