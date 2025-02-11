@@ -1,165 +1,278 @@
-<html><head>
-    <title>QR Code Scanner</title>
-	<script src="./index.min.js"></script>
-	<style>
-* {
-  box-sizing: border-box;
-}
-.menu {
-  float: left;
-  width: 20%;
-}
-.menuitem {
-  padding: 8px;
-  margin-top: 7px;
-  border-bottom: 1px solid #f1f1f1;
-}
-.main {
-  float: left;
-  width: 60%;
-  padding: 0 20px;
-  overflow: hidden;
-}
-.right {
-  background-color: lightblue;
-  float: left;
-  width: 20%;
-  padding: 10px 15px;
-  margin-top: 7px;
-}
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>電子名片</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
 
-@media only screen and (max-width:800px) {
-  /* For tablets: */
-  .main {
-    width: 80%;
-    padding: 0;
-  }
-  .right {
-    width: 100%;
-  }
-}
-@media only screen and (max-width:500px) {
-  /* For mobile phones: */
-  .menu, .main, .right {
-    width: 100%;
-  }
-}
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
 
-table, td, th{
-	border : 1px solid
-}
+        /* Navbar 樣式 */
+        .navbar {
+            width: 100%;
+            background-color: coral;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
 
-.loader {
-  width: 120px;
-  height: 20px;
-  transform: skewX(-45deg);
-  background: 
-    linear-gradient(#f03355 0 0) left -30px top 0/30px 20px no-repeat 
-    #ccc;
-  animation: l3 1s infinite linear;
-}
+        .navbar .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
 
-@keyframes l3 {
-  100% {background-position: right -30px top 0}
-}
-</style>
+        /* 漢堡選單 */
+        .menu-icon {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .menu-icon div {
+            width: 30px;
+            height: 4px;
+            background-color: white;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        /* Navbar 連結 */
+        .navbar-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar-links a {
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+        }
+
+        .navbar-links a:hover {
+            color: #ffcc00;
+        }
+
+        /* RWD: 當螢幕小於 768px 時，隱藏連結並顯示漢堡選單 */
+        @media screen and (max-width: 768px) {
+            .navbar-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: center;
+                background-color: #007bff;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                z-index: 999;
+            }
+
+            .navbar-links.active {
+                display: flex;
+            }
+
+            .menu-icon {
+                display: flex;
+            }
+
+            .menu-icon.active div {
+                background-color: #ffcc00;
+                transform: rotate(45deg);
+            }
+
+            .menu-icon.active div:nth-child(2) {
+                opacity: 0;
+            }
+
+            .menu-icon.active div:nth-child(3) {
+                transform: rotate(-45deg);
+            }
+
+            .navbar-links a {
+                padding: 15px;
+                font-size: 20px;
+            }
+        }
+
+        /* 主體區域 - 名片部分 */
+        .main-content {
+            text-align: center;
+            padding: 30px 20px; /* 改小間隔 */
+			padding-top: 80px; /* 避免內容被固定 Navbar 遮擋，並增加間隔 */
+        }
+
+        .card {
+            width: 90%;
+            max-width: 450px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            padding: 30px 20px; /* 加大內部間隔 */
+        }
+
+        .avatar-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .avatar {
+            width: 120px; /* 增大大頭貼 */
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            background: #ddd;
+        }
+
+        .content {
+            margin-top: 20px;
+        }
+
+        .name {
+            font-size: 26px; /* 增大姓名字型 */
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .title {
+            font-size: 20px; /* 增大職稱字型 */
+            color: #555;
+        }
+
+        .email {
+            font-size: 18px; /* 增大 email 字型 */
+            color: #777;
+            margin-top: 5px;
+        }
+
+        .icons {
+            display: flex;
+            justify-content: center;
+            gap: 30px; /* 增大圖示間距 */
+            margin-top: 25px; /* 增加間隔 */
+        }
+
+        .icons a {
+            text-decoration: none;
+            font-size: 28px; /* 增大圖示 */
+            color: #333;
+            transition: 0.3s;
+        }
+
+        .icons a:hover {
+            color: #007bff;
+        }
+
+    </style>
 </head>
-<body style="top: 5%;position: absolute;left: 12%;font-size: 3em;">
-    <h1>QR Code Scanner</h1>
-<div>
-        <button id="startButton" style=" font-size: 32px;">Start</button> &ensp;&ensp;
-        <button id="resetButton" style=" font-size: 32px;">Reset</button>
-      </div>
+<body>
 
-      <div>
-        <video id="video" width="700" height="550" style="border: 1px solid gray"></video>
-      </div>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">寬聯資訊</div>
+        <div class="navbar-links">
+            <a href="#">首頁</a>
+            <a href="#">服務</a>
+            <a href="#">關於</a>
+            <a href="#">聯絡</a>
+        </div>
+        <div class="menu-icon" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
 
-      <div id="sourceSelectPanel">
-        <label for="sourceSelect" style="    font-size: 32px;">Change video source:</label>
-        <select id="sourceSelect" style="max-width:400px;    font-size: 32px;">
-        </select>
-      </div>
+    <!-- 主內容區域 - 名片 -->
+    <div class="main-content">
+        <div class="card">
+            <!-- 大頭貼 -->
+            <div class="avatar-container">
+                <img class="avatar" id="avatar" src="https://via.placeholder.com/120" alt="大頭貼">
+            </div>
 
-      <label style="font-size: 32px;">Result:</label>
-      <pre><code id="result" style="font-size: 32px;"></code></pre>
-	  
-	  <div class="loader" id='loader' style='display:none'></div>
-	  <table id='fakeTable' style='display:none'>
-		<tr role="row"><th class="k-hierarchy-cell k-header" scope="col"></th><th scope="col" role="columnheader" data-field="StorageArea" aria-haspopup="true" rowspan="1" data-title="儲位" data-index="0" id="d045a8d7-653f-47e6-aee0-f41faa5d7323" class="k-header k-filterable" data-role="columnsorter"><span class="k-cell-inner"><span class="k-link"><span class="k-column-title">儲位</span></span><a class="k-header-column-menu" href="#" title="儲位 edit column settings" aria-label="儲位 edit column settings" tabindex="-1"><span class="k-icon k-i-more-vertical"></span></a></span></th><th scope="col" role="columnheader" data-field="ProjectName" aria-haspopup="true" rowspan="1" data-title="專案" data-index="1" id="e1f0f1b0-90cb-48d5-b068-a20886de7ecb" class="k-header k-filterable" data-role="columnsorter"><span class="k-cell-inner"><span class="k-link"><span class="k-column-title">專案</span></span><a class="k-header-column-menu" href="#" title="專案 edit column settings" aria-label="專案 edit column settings" tabindex="-1"><span class="k-icon k-i-more-vertical"></span></a></span></th><th scope="col" role="columnheader" data-field="DpmOwner" aria-haspopup="true" rowspan="1" data-title="Owner" data-index="2" id="b54439e4-46fa-414e-9dfb-5cda13c1592b" class="k-header k-filterable" data-role="columnsorter"><span class="k-cell-inner"><span class="k-link"><span class="k-column-title">Owner</span></span><a class="k-header-column-menu" href="#" title="Owner edit column settings" aria-label="Owner edit column settings" tabindex="-1"><span class="k-icon k-i-more-vertical"></span></a></span></th><th scope="col" role="columnheader" data-field="Dpn" aria-haspopup="true" rowspan="1" data-title="DPN" data-index="3" id="c75bf8fb-c54f-4c2a-bef0-eb5f2519a749" class="k-header k-filterable" data-role="columnsorter"><span class="k-cell-inner"><span class="k-link"><span class="k-column-title">DPN</span></span><a class="k-header-column-menu" href="#" title="DPN edit column settings" aria-label="DPN edit column settings" tabindex="-1"><span class="k-icon k-i-more-vertical"></span></a></span></th><th scope="col" role="columnheader" data-field="Revision" aria-haspopup="true" rowspan="1" data-title="Rev." data-index="4" id="b7afa3bf-7681-4fe4-ab09-0c52b3bbd974" class="k-header k-filterable" data-role="columnsorter"><span class="k-cell-inner"><span class="k-link"><span class="k-column-title">Rev.</span></span><a class="k-header-column-menu" href="#" title="Rev. edit column settings" aria-label="Rev. edit column settings" tabindex="-1"><span class="k-icon k-i-more-vertical"></span></a></span></th><th scope="col" role="columnheader" data-field="Sku" aria-haspopup="true" rowspan="1" data-title="Sku" data-index="5" id="a40081f4-08af-4ba7-b9e5-5908aa910dce" class="k-header k-filterable" data-role="columnsorter"><span class="k-cell-inner"><span class="k-link"><span class="k-column-title">Sku</span></span><a class="k-header-column-menu" href="#" title="Sku edit column settings" aria-label="Sku edit column settings" tabindex="-1"><span class="k-icon k-i-more-vertical"></span></a></span></th><th scope="col" role="columnheader" data-field="SmsCategory" aria-haspopup="true" rowspan="1" data-title="SMS Category" data-index="6" id="f2973e03-c36a-4bd9-a3d8-2eaa0c8494f9" class="k-header k-filterable" data-role="columnsorter"><span class="k-cell-inner"><span class="k-link"><span class="k-column-title">SMS Category</span></span><a class="k-header-column-menu" href="#" title="SMS Category edit column settings" aria-label="SMS Category edit column settings" tabindex="-1"><span class="k-icon k-i-more-vertical"></span></a></span></th><th scope="col" role="columnheader" data-field="AvailableQty" aria-haspopup="true" rowspan="1" data-title="可出量" data-index="7" id="b0fdd0f0-5725-451e-9bf6-0358e0e305e4" class="k-header k-filterable" data-role="columnsorter"><span class="k-cell-inner"><span class="k-link"><span class="k-column-title">可出量</span></span><a class="k-header-column-menu" href="#" title="可出量 edit column settings" aria-label="可出量 edit column settings" tabindex="-1"><span class="k-icon k-i-more-vertical"></span></a></span></th><th scope="col" role="columnheader" aria-haspopup="true" rowspan="1" data-title="庫存量" data-index="8" id="efec08a2-b730-4762-8ebe-1e1549d50d31" class="k-header"><span class="k-cell-inner"><span class="k-link"><span class="k-column-title">庫存量</span></span></span></th><th scope="col" role="columnheader" data-field="Manufacturers" aria-haspopup="true" rowspan="1" data-title="製造商" data-index="9" id="fdedfb66-825d-40af-bc29-8b898860153c" class="k-header k-filterable" data-role="columnsorter"><span class="k-cell-inner"><span class="k-link"><span class="k-column-title">製造商</span></span><a class="k-header-column-menu" href="#" title="製造商 edit column settings" aria-label="製造商 edit column settings" tabindex="-1"><span class="k-icon k-i-more-vertical"></span></a></span></th><th scope="col" role="columnheader" data-field="Mpn" aria-haspopup="true" rowspan="1" data-title="MPN" data-index="10" id="aede76f3-9ada-436d-b02b-b82092d99b35" class="k-header k-filterable" data-role="columnsorter"><span class="k-cell-inner"><span class="k-link"><span class="k-column-title">MPN</span></span><a class="k-header-column-menu" href="#" title="MPN edit column settings" aria-label="MPN edit column settings" tabindex="-1"><span class="k-icon k-i-more-vertical"></span></a></span></th><th scope="col" role="columnheader" data-field="Warehouse" aria-haspopup="true" rowspan="1" data-title="倉別" data-index="11" id="c4a1cbd5-c281-4c16-8724-c5966f037244" class="k-header k-filterable" data-role="columnsorter"><span class="k-cell-inner"><span class="k-link"><span class="k-column-title">倉別</span></span><a class="k-header-column-menu" href="#" title="倉別 edit column settings" aria-label="倉別 edit column settings" tabindex="-1"><span class="k-icon k-i-more-vertical"></span></a></span></th><th scope="col" role="columnheader" data-field="Coo" aria-haspopup="true" rowspan="1" data-title="Coo" data-index="12" id="f9bf06bb-6f50-44ad-8122-11cd95d87f35" class="k-header k-filterable" data-role="columnsorter"><span class="k-cell-inner"><span class="k-link"><span class="k-column-title">Coo</span></span><a class="k-header-column-menu" href="#" title="Coo edit column settings" aria-label="Coo edit column settings" tabindex="-1"><span class="k-icon k-i-more-vertical"></span></a></span></th><th scope="col" role="columnheader" data-field="Remark" aria-haspopup="true" rowspan="1" data-title="Remark" data-index="13" id="a8ae7f4f-e19f-4f1a-b7ae-988c253b7541" class="k-header k-filterable" data-role="columnsorter"><span class="k-cell-inner"><span class="k-link"><span class="k-column-title">Remark</span></span><a class="k-header-column-menu" href="#" title="Remark edit column settings" aria-label="Remark edit column settings" tabindex="-1"><span class="k-icon k-i-more-vertical"></span></a></span></th></tr>
-		<tr class="k-alt k-master-row" data-uid="b52ebda7-5e42-4d66-9e2d-7584f8e6c6ce" role="row"><td class="k-hierarchy-cell" aria-expanded="false"><a class="k-icon k-i-expand" href="#" aria-label="Expand" tabindex="-1"></a></td><td class="" role="gridcell">外倉A01</td><td class="" role="gridcell">Acqua</td><td class="" role="gridcell">Erika Lee</td><td class="" role="gridcell">3JYGF</td><td class="" role="gridcell">A00</td><td class="" role="gridcell">1</td><td class="" role="gridcell">ME/Thermal</td><td class="" role="gridcell">25</td><td role="gridcell">25</td><td class="" role="gridcell">NA</td><td class="" role="gridcell">NA</td><td class="" role="gridcell">台北 - 良品</td><td class="" role="gridcell">NA</td><td class="" role="gridcell"></td></tr>
-	  </table>
-    
+            <!-- 名片內容 -->
+            <div class="content">
+                <p class="name" id="name">張三</p>
+                <p class="title" id="title">軟體工程師</p>
+                <p class="email" id="email">zhangsan@example.com</p>
+            </div>
+
+            <!-- 社交圖示 -->
+            <div class="icons">
+                <a href="mailto:zhangsan@example.com">📧</a>
+                <a href="tel:+886912345678">📞</a>
+                <a href="https://github.com/zhangsan" target="_blank">🐱</a>
+                <a href="https://linkedin.com/in/zhangsan" target="_blank">💼</a>
+            </div>
+        </div>
+    </div>
+
     <script>
-        window.addEventListener('load', function () {
-      let selectedDeviceId;
-      const codeReader = new ZXing.BrowserMultiFormatReader()
-      console.log('ZXing code reader initialized')
-      codeReader.listVideoInputDevices()
-        .then((videoInputDevices) => {
-          const sourceSelect = document.getElementById('sourceSelect')
-          selectedDeviceId = videoInputDevices[0].deviceId
-          if (videoInputDevices.length >= 1) {
-            videoInputDevices.forEach((element) => {
-              const sourceOption = document.createElement('option')
-              sourceOption.text = element.label
-              sourceOption.value = element.deviceId
-              sourceSelect.appendChild(sourceOption)
-            })
-
-            sourceSelect.onchange = () => {
-              selectedDeviceId = sourceSelect.value;
-			  document.getElementById('resetButton').click();
-			  document.getElementById('startButton').click();
-            };
-
-            const sourceSelectPanel = document.getElementById('sourceSelectPanel')
-            sourceSelectPanel.style.display = 'block'
-          }
-
-          document.getElementById('startButton').addEventListener('click', () => {
-            codeReader.decodeFromVideoDevice(selectedDeviceId, 'video', (result, err) => {
-              if (result) {
-                console.log(result)
-                document.getElementById('result').textContent = result.text;
-				
-				const loader = document.getElementById('loader')
-				loader.style.display = 'block'
-				
-				setTimeout(function(){
-					const fakeTable = document.getElementById('fakeTable')
-					fakeTable.style.display = 'block';
-					
-					loader.style.display = 'none'
-				}, 500);
-				
-				
-              }
-              if (err && !(err instanceof ZXing.NotFoundException)) {
-                console.error(err)
-                document.getElementById('result').textContent = err
-              }
-            })
-            console.log(`Started continous decode from camera with id ${selectedDeviceId}`)
-          })
-
-          document.getElementById('resetButton').addEventListener('click', () => {
-            codeReader.reset()
-            document.getElementById('result').textContent = '';
-			const fakeTable = document.getElementById('fakeTable')
-			fakeTable.style.display = 'none';
-			const loader = document.getElementById('loader')
-			loader.style.display = 'none'
-            console.log('Reset.')
-          })
-
-        })
-        .catch((err) => {
-          console.error(err)
-        })
-		})
+        // 切換漢堡選單顯示/隱藏
+        function toggleMenu() {
+            const navbarLinks = document.querySelector('.navbar-links');
+            const menuIcon = document.querySelector('.menu-icon');
+            navbarLinks.classList.toggle('active');
+            menuIcon.classList.toggle('active');
+        }
 		
+		// 解析 URL 查詢參數
+		function getQueryParams() {
+			const params = new URLSearchParams(window.location.search);
+			const data = params.get('data');   // 取得 JSON Base64 編碼資料
+			const avatar = params.get('avatar'); // 取得圖片 Base64 編碼資料
+			return { data, avatar };
+		}
+
+		// 解析 Base64 編碼的 JSON
+		function parseData(dataBase64) {
+			const jsonStr = atob(dataBase64); // 解碼 Base64
+			return JSON.parse(jsonStr); // 轉換為 JSON 對象
+		}
+
+		// 顯示資訊
+		function displayInfo() {
+			const { data, avatar } = getQueryParams();
+			
+			if (data && avatar) {
+				// 解析 JSON 資料
+				const info = parseData(data);
+				console.log(info);
+
+				// 顯示圖片
+				const avatarImage = document.getElementById("avatar");
+				avatarImage.src = `data:image/png;base64,${avatar.replaceAll(' ', '+')}`;
+
+				// 顯示名稱、職稱、郵件等
+				document.getElementById("name").textContent = info.name;
+				document.getElementById("title").textContent = info.title;
+				document.getElementById("email").textContent = info.email;
+			} else {
+				console.log("Missing data or avatar.");
+			}
+		}
+
+		// 在頁面載入時執行
+		window.onload = displayInfo;
     </script>
 
-
-</body></html>
+</body>
+</html>
