@@ -84,6 +84,11 @@
 				correctLevel : QRCode.CorrectLevel.H, // L, M, Q, H
 			};
 			
+			let element = document.getElementById("outputBase64");
+			while (element.firstChild) {
+			  element.removeChild(element.firstChild);
+			}
+			
 			// Create QRCode Object
 			new QRCode(document.getElementById("outputBase64"), options );
 
