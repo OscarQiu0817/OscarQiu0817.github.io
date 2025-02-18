@@ -57,7 +57,7 @@ const content = {
 };
 function setLanguage(lang) {
     document.getElementById('title').textContent = content[lang].title;
-    document.getElementById('button').textContent = content[lang].button;
+    //document.getElementById('button').textContent = content[lang].button;
 	document.getElementById('name').textContent = content[lang].name;
     document.getElementById('title1').textContent = content[lang].title1;
     document.getElementById('title2').textContent = content[lang].title2;
@@ -73,6 +73,7 @@ function setLanguage(lang) {
 	document.getElementById('e-title').textContent = content[lang].e.title;
 	document.getElementById('e').textContent = content[lang].e.value;
 	
+	displayInfo();
 }
 
 $(function() {
@@ -118,8 +119,8 @@ $(function() {
     $('#btn-qrcode').click(function() {
         // 隱藏當前區塊並切換顯示的區塊
         $('.show').removeClass('show');
-        $('#qrcode').parent().addClass('show');
-        $('#qrcode').show();
+        $('#qrcode1').parent().addClass('show');
+        //$('#qrcode').show();
         $('#btn-photo').show();
     });
 
@@ -128,7 +129,7 @@ $(function() {
         // 隱藏當前區塊並切換顯示的區塊
         $('.show').removeClass('show');
         $('#photo').parent().addClass('show');
-        $('#photo').show();
+        //$('#photo').show();
         $('#btn-qrcode').show();
     });
 

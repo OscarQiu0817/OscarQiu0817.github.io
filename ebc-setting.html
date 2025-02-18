@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vcard 動態輸入</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        form { display: flex; flex-direction: column; max-width: 500px; }
+        label { margin-top: 10px; }
+        input { margin-top: 5px; padding: 8px; }
+        button { margin-top: 20px; padding: 10px; cursor: pointer; }
+        pre { background: #f4f4f4; padding: 10px; margin-top: 20px; }
+    </style>
+	<script src="./canvas2svg.js" type="text/javascript" charset="utf-8"></script>
+	<script src="./easy.qrcode.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+    <h2>Vcard 動態輸入</h2>
+    <form id="vcardForm">
+        <label for="org">公司:</label>
+        <input type="text" id="org" name="org" value="寬聯資訊">
+
+        <label for="title1">部門:</label>
+        <input type="text" id="title1" name="title1" value="數位銀行一組">
+
+        <label for="title2">職稱:</label>
+        <input type="text" id="title2" name="title2" value="軟體工程師">
+
+        <label for="name">姓名:</label>
+        <input type="text" id="name" name="name" value="理查棒">
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" value="test1234@mail.com">
+
+        <label for="phone">手機:</label>
+        <input type="tel" id="phone" name="phone" value="0912345678">
+
+        <label for="address">地址:</label>
+        <input type="text" id="address" name="address" value="台北市內湖區舊宗路二段207號8樓">
+
+        <label for="fax">傳真:</label>
+        <input type="text" id="fax" name="fax" value="(02) 8798-9800">
+
+        <label for="guid">GUID:</label>
+        <input type="text" id="guid" name="guid" value="86519539">
+
+        <label for="avatarUrl">Avatar URL:</label>
+        <input type="url" id="avatarUrl" name="avatarUrl" value="test1234@mail.com">
+
+        <label for="lineShort">Line 短鏈接:</label>
+        <input type="url" id="lineShort" name="lineShort" value="https://line.me/XXXXXXXX">
+
+        <label for="customUrl1">自定義 URL 1:</label>
+        <input type="url" id="customUrl1" name="customUrl1" value="https://www.taishinbank.com.tw/TSB/personal/">
+
+        <label for="customUrl2">自定義 URL 2:</label>
+        <input type="url" id="customUrl2" name="customUrl2">
+
+        <button type="button" id="generateBtn">生成物件</button>
+    </form>
+
+    <h3>生成的物件:</h3>
+    <pre id="output"></pre>
+	
+	<h3>生成的物件BASE64 encode:</h3>
+    <pre id="outputBase64"></pre>
+
+    <script>
+        document.getElementById('generateBtn').addEventListener('click', function() {
+            let obb = {};
+            const inputs = document.querySelectorAll('#vcardForm input');
+            inputs.forEach(input => {
+                obb[input.name] = input.value;
+            });
+            document.getElementById('output').textContent = JSON.stringify(obb, null, 4);
+			
+			
+			var options = {
+				text: `https://oscarqiu0817.github.io/ebc.html?data=${btoa(escape(JSON.stringify(obb)))}`,
+				width: 512,
+				height: 512,
+				colorDark : "#000000",
+				colorLight : "#ffffff",
+				correctLevel : QRCode.CorrectLevel.H, // L, M, Q, H
+			};
+			
+			// Create QRCode Object
+			new QRCode(document.getElementById("outputBase64"), options );
+
+        });
+    </script>
+</body>
+</html>

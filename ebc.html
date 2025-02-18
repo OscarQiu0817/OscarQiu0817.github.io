@@ -7,9 +7,36 @@
     <link rel="stylesheet" href="poc_ebc/css/styles.css">
     <script src="poc_ebc/js/jquery.min.js" defer></script>
     <script src="poc_ebc/js/common.js" defer></script>
+    <script src="./canvas2svg.js" type="text/javascript" charset="utf-8"></script>
+	<script src="./easy.qrcode.js" type="text/javascript" charset="utf-8"></script>
     <link rel="icon" href="poc_ebc/favicon.ico" type="image/x-icon">
     <title>台新銀行電子名片</title>
 </head>
+
+<style>
+    #photo{
+        width: 240px; /* 增大大頭貼 */
+        height: 240px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid white;
+        background: #ddd;
+    }
+
+    #qrcode1{
+        height: 240px;
+        padding: 10px;
+        background: white;
+        border-radius: 20px;
+        margin: 0px 55px;
+    }
+
+    #qrcode1 svg{
+        margin: 0 auto;
+        display: flex;
+    }
+
+</style>
 
 <body>
 
@@ -29,7 +56,7 @@
                 <button class="active">中文</button>
                 <button>EN</button>
             </div>
-            <button id="button">{{ button }}</button>
+            <!-- <button id="button">{{ button }}</button> -->
         </div>
         
         <div class="content">
@@ -38,7 +65,8 @@
                 <button id="btn-qrcode"><img src="poc_ebc/image/ic_qrcode.svg" alt="切換qrcode"></button>
             </div>
             <div class="imgBlock">
-                <img id="qrcode" src="poc_ebc/image/fake_qrcoge.svg" alt="qrcode">
+                <div class="qrcode" id="qrcode1"></div>
+                <!-- <img id="qrcode" src="poc_ebc/image/fake_qrcoge.svg" alt="qrcode"> -->
                 <button id="btn-photo"><img src="poc_ebc/image/ic_photo.svg" alt="切換頭像"></button>
             </div>
             <div class="nameBlock">
@@ -71,11 +99,24 @@
                 </div>
             </div>
             <div class="optionBtn">
-                <button class="dialogBtn"><img src="poc_ebc/image/ic_line.svg" alt="Line"></button>
-                <!-- <button onclick="window.open('https://line.me/ti/p/3GJBlGbFxh', '_blank')" class="dialogBtn"><img src="poc_ebc/image/ic_line.svg" alt="Line"></button> -->
-                <button onclick="window.location.href='mailto:janiceliang@taishbank.com.tw'"><img src="poc_ebc/image/ic_mail.svg" alt="email"></button>
-                <button onclick="window.location.href='tel:0912345678'"><img src="poc_ebc/image/ic_phone.svg" alt="phonNum"></button>
-                <button onclick="window.open('https://www.taishinbank.com.tw/TSB/personal/', '_blank')"><img src="poc_ebc/image/ic_logo.svg" alt="web"></button>
+                <button class="dialogBtn">
+                    <img src="poc_ebc/image/ic_line.svg" alt="Line">
+                </button>
+                <button>
+                    <a id='iconMail' href="mailto:janiceliang@taishbank.com.tw">
+                        <img src="poc_ebc/image/ic_mail.svg" alt="email">
+                    </a>
+                </button>
+                <button>
+                    <a id='iconPhone' href="tel:+886912345678">
+                        <img src="poc_ebc/image/ic_phone.svg" alt="phonNum">
+                    </a>
+                </button>
+                <button>
+                    <a href="https://www.taishinbank.com.tw/TSB/personal/" target="_blank">
+                        <img src="poc_ebc/image/ic_logo.svg" alt="web">
+                    </a>
+                </button>
             </div>
         </div>
     </main>
@@ -98,5 +139,111 @@
     </div>
     <!-- dialog元件 end -->
 </body>
+
+<script>
+
+        
+        let obb = 
+        {
+			"org": "寬聯資訊",
+			"title1": "數位銀行一組",
+            "title2": "軟體工程師",
+			"name": "理查棒",
+			"email": "test1234@mail.com",
+			"phone": "0912345678",
+            "address": "台北市內湖區舊宗路二段207號8樓",
+            "fax": "(02) 8798-9800",
+            "guid": "86519539",
+			"avatarUrl": "test1234@mail.com",
+			"lineShort": "https://line.me/ti/p/3GJBlGbFxh",
+			"customUrl1": "https://www.taishinbank.com.tw/TSB/personal/",
+            "customUrl2": ""
+		};
+        
+        
+
+        // 解析 URL 查詢參數
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            const data = params.get('data');   // 取得 JSON Base64 編碼資料
+            return { data };
+        }
+
+        // 解析 Base64 編碼的 JSON
+		function parseData(dataBase64) {
+			const jsonStr = atob(dataBase64); // 解碼 Base64
+            console.log(jsonStr);
+			return JSON.parse(unescape(jsonStr) ); // 轉換為 JSON 對象
+		}
+
+        function displayInfo() {
+			const { data } = getQueryParams();
+
+            console.log(data);
+			
+			if (data ) {
+				// 解析 JSON 資料
+				const info = parseData(data);
+				console.log(info);
+
+				// 顯示圖片
+				// const avatarImage = document.getElementById("avatar");
+				//avatarImage.src = `data:image/png;base64,${avatar.replaceAll(' ', '+')}`;
+				// avatarImage.src = atob(`${avatar}`);
+
+				// 顯示名稱、職稱、郵件等
+				document.getElementById("name").textContent = info.name;
+                document.getElementById('title1').textContent = info.title1;
+                document.getElementById('title2').textContent = info.title2;
+
+				document.getElementById("e").textContent = info.email;
+				document.getElementById("iconMail").href = "mailto:" + info.email;
+
+                document.getElementById('tel').textContent = info.phone;
+				document.getElementById("iconPhone").href = "tel:" + info.phone;
+
+                document.getElementById('address').textContent = info.address;
+                document.getElementById('fax').textContent = info.fax;
+                document.getElementById('guid').textContent = info.guid;
+				
+				
+				initQr( info );
+				
+			} else {
+				console.log("Missing data or avatar.");
+			}
+		}
+
+        function initQr( info ){
+			
+			var options = {
+				text: [
+					"BEGIN:VCARD",
+					"VERSION:3.0",
+					"N:Doe;John;;Dr;", // name
+					`FN:${info.name}`, // full name
+					`ORG:${info.org}`,
+					`TITLE:${info.title1}`,
+					`EMAIL:${info.email}`,
+					`TEL;TYPE=cell:${info.phone}`,
+                    `ADR;WORK:;;${info.address}`,
+					"END:VCARD"
+				].join("\r\n"),
+				width: 220,
+				height: 220,
+				colorDark : "#000000",
+				colorLight : "#ffffff",
+                drawer: 'svg',
+				correctLevel : QRCode.CorrectLevel.H, // L, M, Q, H
+			};
+			
+			// Create QRCode Object
+			new QRCode(document.getElementById("qrcode1"), options );
+		
+		}
+
+        // 在頁面載入時執行
+		// window.onload = displayInfo;
+</script>
 
 </html>

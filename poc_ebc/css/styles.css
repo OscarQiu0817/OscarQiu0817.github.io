@@ -4866,7 +4866,7 @@ main::before {
 }
 
 .dataList {
-  width: 280px;
+  width: 330px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
