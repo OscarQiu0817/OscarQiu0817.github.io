@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <link rel="stylesheet" href="poc_ebc/css/styles.css">
+    <link rel="stylesheet" href="./vanilla-toast.css">
     <script src="poc_ebc/js/jquery.min.js" defer></script>
     <script src="poc_ebc/js/common.js" defer></script>
-    <script src="./canvas2svg.js" type="text/javascript" charset="utf-8"></script>
-	<script src="./easy.qrcode.js" type="text/javascript" charset="utf-8"></script>
+	<script src="./vanilla-toast.js" type="text/javascript" charset="utf-8"></script>
     <link rel="icon" href="poc_ebc/favicon.ico" type="image/x-icon">
     <title>台新銀行電子名片</title>
 </head>
@@ -31,7 +31,7 @@
         margin: 0px 55px;
     }
 
-    #qrcode1 svg{
+    #qrcode1 canvas{
         margin: 0 auto;
         display: flex;
     }
@@ -130,7 +130,9 @@
                 <h2>加入Line好友</h2>
             </div>
             <div class="dialogContent">
-                <img onclick="window.open('https://line.me/ti/p/3GJBlGbFxh', '_blank')" src="poc_ebc/image/fake_line.jpg" alt="加入Line好友">
+                <a id='iconLine' href="https://line.me/ti/p/3GJBlGbFxh" target="_blank">
+                    <img style='width:100%' src="poc_ebc/image/fake_line.jpg" alt="加入Line好友">
+                </a>
             </div>
             <div class="dialogFooter">
                 <button class="basic closeBtn">關閉</button>
@@ -143,22 +145,22 @@
 <script>
 
         
-        let obb = 
-        {
-			"org": "寬聯資訊",
-			"title1": "數位銀行一組",
-            "title2": "軟體工程師",
-			"name": "理查棒",
-			"email": "test1234@mail.com",
-			"phone": "0912345678",
-            "address": "台北市內湖區舊宗路二段207號8樓",
-            "fax": "(02) 8798-9800",
-            "guid": "86519539",
-			"avatarUrl": "test1234@mail.com",
-			"lineShort": "https://line.me/ti/p/3GJBlGbFxh",
-			"customUrl1": "https://www.taishinbank.com.tw/TSB/personal/",
-            "customUrl2": ""
-		};
+        // let obb = 
+        // {
+		// 	"org": "寬聯資訊",
+		// 	"title1": "數位銀行一組",
+        //     "title2": "軟體工程師",
+		// 	"name": "理查棒",
+		// 	"email": "test1234@mail.com",
+		// 	"phone": "0912345678",
+        //     "address": "台北市內湖區舊宗路二段207號8樓",
+        //     "fax": "(02) 8798-9800",
+        //     "guid": "86519539",
+		// 	"avatarUrl": "test1234@mail.com",
+		// 	"lineShort": "https://line.me/ti/p/3GJBlGbFxh",
+		// 	"customUrl1": "https://www.taishinbank.com.tw/TSB/personal/",
+        //     "customUrl2": ""
+		// };
         
         
 
@@ -179,8 +181,6 @@
         function displayInfo() {
 			const { data } = getQueryParams();
 
-            console.log(data);
-			
 			if (data ) {
 				// 解析 JSON 資料
 				const info = parseData(data);
@@ -202,15 +202,18 @@
                 document.getElementById('tel').textContent = info.phone;
 				document.getElementById("iconPhone").href = "tel:" + info.phone;
 
+                document.getElementById("iconLine").href = "" + info.lineShort;
+
                 document.getElementById('address').textContent = info.address;
                 document.getElementById('fax').textContent = info.fax;
                 document.getElementById('guid').textContent = info.guid;
-				
+
+                document.getElementById('photo').src = info.avatarUrl;
 				
 				initQr( info );
 				
 			} else {
-				console.log("Missing data or avatar.");
+				vanillaToast.show("Missing data. Using default value instead !");
 			}
 		}
 
@@ -233,7 +236,6 @@
 				height: 220,
 				colorDark : "#000000",
 				colorLight : "#ffffff",
-                drawer: 'svg',
 				correctLevel : QRCode.CorrectLevel.H, // L, M, Q, H
 			};
 			
