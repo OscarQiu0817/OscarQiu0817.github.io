@@ -241,7 +241,12 @@
 				colorLight : "#ffffff",
 				correctLevel : QRCode.CorrectLevel.H, // L, M, Q, H
 			};
-			
+
+		        let element = document.getElementById("qrcode1");
+			while (element.firstChild) {
+			  element.removeChild(element.firstChild);
+			}
+		
 			// Create QRCode Object
 			new QRCode(document.getElementById("qrcode1"), options );
 		
