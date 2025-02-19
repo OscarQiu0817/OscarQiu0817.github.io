@@ -1,20 +1,57 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vcard 動態輸入</title>
+    <script src="poc_ebc/js/jquery.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        form { display: flex; flex-direction: column; max-width: 500px; }
-        label { margin-top: 10px; }
-        input { margin-top: 5px; padding: 8px; }
-        button { margin-top: 20px; padding: 10px; cursor: pointer; }
-        pre { background: #f4f4f4; padding: 10px; margin-top: 20px; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            max-width: 500px;
+        }
+
+        label {
+            margin-top: 10px;
+        }
+
+        input {
+            margin-top: 5px;
+            padding: 8px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            margin-top: 20px;
+        }
     </style>
-	<script src="./canvas2svg.js" type="text/javascript" charset="utf-8"></script>
-	<script src="./easy.qrcode.js" type="text/javascript" charset="utf-8"></script>
+    <style>
+        #preview {
+            margin-top: 10px;
+            display: none;
+            border: 1px solid #ddd;
+            max-width: 384px;
+        }
+    </style>
+    <script src="./canvas2svg.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./easy.qrcode.js" type="text/javascript" charset="utf-8"></script>
+    
 </head>
+
 <body>
     <h2>Vcard 動態輸入</h2>
     <form id="vcardForm">
@@ -54,45 +91,125 @@
         <label for="customUrl1">自定義 URL 1:</label>
         <input type="url" id="customUrl1" name="customUrl1" value="https://www.taishinbank.com.tw/TSB/personal/">
 
-        <label for="customUrl2">自定義 URL 2:</label>
-        <input type="url" id="customUrl2" name="customUrl2">
-
         <button type="button" id="generateBtn">生成物件</button>
     </form>
 
     <h3>生成的物件:</h3>
     <pre id="output"></pre>
-	
-	<h3>生成的物件BASE64 encode:</h3>
+
+    <h3>生成的物件BASE64 encode:</h3>
     <pre id="outputBase64"></pre>
 
+    <HR style="
+            border: 3px solid blue;
+            width: 100%;
+        ">
+
+    <h2>上傳圖片並轉換為 VCard</h2>
+    <input type="file" id="imageInput" accept="image/*">
+    <br>
+    <canvas id="preview" width="384" height="384"></canvas>
+    <br>
+    <button id="downloadVCard" disabled>下載 VCF</button>
+
     <script>
-        document.getElementById('generateBtn').addEventListener('click', function() {
+
+        $(document).ready(function () {
+            let base64Image = "";
+
+            $("#imageInput").on("change", function (event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = new Image();
+                    img.src = e.target.result;
+
+                    img.onload = function () {
+                        const canvas = document.getElementById("preview");
+                        const ctx = canvas.getContext("2d");
+
+                        // 設定新尺寸
+                        canvas.width = 384;
+                        canvas.height = 384;
+
+                        // 清除舊畫面並繪製縮放後的圖片
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                        // 顯示預覽
+                        $("#preview").show();
+
+                        // 轉換為 Base64
+                        base64Image = canvas.toDataURL("image/png").split(",")[1];
+
+                        // 啟用下載按鈕
+                        $("#downloadVCard").prop("disabled", false);
+                    };
+                };
+                reader.readAsDataURL(file);
+            });
+
+            $("#downloadVCard").on("click", function () {
+                if (!base64Image) return;
+
+                // 產生 vCard 字串
+                const vCard = 
+                [
+                    "BEGIN:VCARD",
+					"VERSION:3.0",
+					"N:姓;名;;;", // name
+					`FN:全名`, // full name
+					`ORG:XX公司`,
+					`TITLE:職位`,
+					`EMAIL:XX@xx.com`,
+					`TEL;TYPE=cell:0912345678`,
+                    `ADR;WORK:;;公司地址`,
+					`PHOTO;ENCODING=b;TYPE=PNG:${base64Image}`, // full name
+					"END:VCARD"
+				].join("\r\n");
+
+                // 建立 Blob 下載 vcf 檔案
+                const blob = new Blob([vCard], { type: "text/vcard" });
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(blob);
+                a.download = "contact.vcf";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
+        });
+
+        document.getElementById('generateBtn').addEventListener('click', function () {
             let obb = {};
             const inputs = document.querySelectorAll('#vcardForm input');
             inputs.forEach(input => {
-                obb[input.name] = input.value;
+                if (input.name != 'imageInput') {
+                    obb[input.name] = input.value;
+                }
             });
             document.getElementById('output').textContent = JSON.stringify(obb, null, 4);
-			
-			var options = {
-				text: `https://oscarqiu0817.github.io/ebc.html?data=${btoa(escape(JSON.stringify(obb)))}`,
-				width: 365,
-				height: 365,
-				colorDark : "#000000",
-				colorLight : "#ffffff",
-				correctLevel : QRCode.CorrectLevel.H, // L, M, Q, H
-			};
-			
-			let element = document.getElementById("outputBase64");
-			while (element.firstChild) {
-			  element.removeChild(element.firstChild);
-			}
-			
-			// Create QRCode Object
-			new QRCode(document.getElementById("outputBase64"), options );
+
+            var options = {
+                text: `https://oscarqiu0817.github.io/ebc.html?data=${btoa(escape(JSON.stringify(obb)))}`,
+                width: 365,
+                height: 365,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H, // L, M, Q, H
+            };
+
+            let element = document.getElementById("outputBase64");
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+
+            // Create QRCode Object
+            new QRCode(document.getElementById("outputBase64"), options);
 
         });
     </script>
 </body>
+
 </html>
