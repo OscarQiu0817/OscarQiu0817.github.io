@@ -52,11 +52,11 @@
     </header>
     <main>
         <div class="tabBlock">
-            <div class="tabNav">
+            <!-- <div class="tabNav">
                 <span class="switcher"></span>
                 <button class="active">中文</button>
                 <button>EN</button>
-            </div>
+            </div>-->
             <!-- <button id="button">{{ button }}</button> -->
         </div>
         
@@ -68,8 +68,10 @@
                 <button id="btn-qrcode"><img src="poc_ebc/image/ic_qrcode.svg" alt="切換qrcode"></button>
             </div>
             <div class="imgBlock">
-                <div class="qrcode" id="qrcode1"></div>
-                <!-- <img id="qrcode" src="poc_ebc/image/fake_qrcoge.svg" alt="qrcode"> -->
+                <div class="qrcode" id="qrcode1">
+					<img id="qrcode" src="poc_ebc/image/fake_qrcoge.svg" alt="qrcode">
+				</div>
+
                 <button id="btn-photo"><img src="poc_ebc/image/ic_photo.svg" alt="切換頭像"></button>
             </div>
             <div class="nameBlock">
@@ -216,11 +218,13 @@
 				initQr( info );
 				
 			} else {
-				vanillaToast.show("Missing data. Using default value instead !");
+				// vanillaToast.show("Missing data. Using default value instead !");
 			}
 		}
 
         function initQr( info ){
+		
+			$('#qrcode').remove();
 			
 			var options = {
 				text: [
@@ -242,7 +246,7 @@
 				correctLevel : QRCode.CorrectLevel.H, // L, M, Q, H
 			};
 
-		        let element = document.getElementById("qrcode1");
+			let element = document.getElementById("qrcode1");
 			while (element.firstChild) {
 			  element.removeChild(element.firstChild);
 			}
