@@ -233,7 +233,7 @@
 				text: [
 					"BEGIN:VCARD",
 					"VERSION:3.0",
-					"N:Doe;John;;Dr;", // name
+					`N:${info.name}`, // name
 					`FN:${info.name}`, // full name
 					`ORG:${info.org}`,
 					`TITLE:${info.title1}_${info.title2}`,
