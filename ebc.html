@@ -216,7 +216,14 @@
                 document.getElementById('guid').textContent = info.guid;
 
                 if( info.avatarUrl && info.avatarUrl != '' ){
-                    document.getElementById('photo').src = info.avatarUrl;
+                    if( info.avatarUrl == 'pic1' ){
+                        document.getElementById('photo').src = 'poc_ebc/image/fordemo/pic1.png';
+                    }else if( info.avatarUrl == 'pic2' ){
+                        document.getElementById('photo').src = 'poc_ebc/image/fordemo/pic2.png';
+                    }else{
+                        document.getElementById('photo').src = info.avatarUrl;
+                    }
+                    
                 }
 				
 				initQr( info );
