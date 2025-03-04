@@ -30,7 +30,8 @@
         padding: 10px;
         background: white;
         border-radius: 20px;
-        margin: 0px 55px;
+        margin: auto;
+        width: 75%;
     }
 
     #qrcode1 canvas{
@@ -239,6 +240,7 @@
 					`TITLE:${info.title1}_${info.title2}`,
 					`EMAIL:${info.email}`,
 					`TEL;TYPE=cell:${info.phone}`,
+                    `TEL;TYPE=work:${info.fax.replace('#',',')}`,
                     `ADR;WORK:;;${info.address}`,
 					"END:VCARD"
 				].join("\r\n"),

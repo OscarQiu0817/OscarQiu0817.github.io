@@ -11,11 +11,11 @@ const content = {
 			value: '台北市內湖區舊宗路二段207號8樓'
 		},
 		tel: {
-			title: '電話',
+			title: '手機',
 			value: '(02) 8798-9999  #8599'
 		},
 		fax: {
-			title: '傳真',
+			title: '電話',
 			value: '(02) 8798-9800'
 		},
 		guid: {
